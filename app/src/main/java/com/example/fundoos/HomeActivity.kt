@@ -90,8 +90,6 @@ class HomeActivity : AppCompatActivity() {
             val user = FirebaseAuth.getInstance().currentUser
 
 
-//            eMail_navigationView.text = user?.email
-
             if(user?.photoUrl != null) {
                 Picasso.with(this@HomeActivity).load(user.photoUrl).into(profileImage)
                 Picasso.with(this@HomeActivity).load(user.photoUrl).into(image_navigationView)
@@ -200,8 +198,6 @@ class HomeActivity : AppCompatActivity() {
         }
 
     }
-
-
 
     fun layOut() {
         val builder = AlertDialog.Builder(this)
