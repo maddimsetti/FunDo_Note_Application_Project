@@ -1,8 +1,6 @@
 package com.example.fundoos
 
-import android.app.DownloadManager
 import android.content.Intent
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.util.Patterns
@@ -19,8 +17,6 @@ import com.facebook.login.widget.LoginButton
 import com.google.firebase.auth.FacebookAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
-import org.json.JSONObject
-import java.lang.Exception
 import java.util.*
 
 
@@ -289,5 +285,11 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
             }
         }
     }
+
+//    override fun onResetPassword(status: Boolean) {
+//        if(status) {
+//            Toast.makeText(applicationContext, "Reset Password Link Sent To Mail", Toast.LENGTH_LONG).show()
+//        }
+//    }
 
 }
