@@ -37,6 +37,7 @@ class DataBaseHandler(context: Context):
     }
 
     fun addNewNotes(notes: CreatingNewNotes): Long {
+
         val database = this.writableDatabase
 
         val contentValues = ContentValues()
