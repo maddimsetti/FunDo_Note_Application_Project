@@ -42,6 +42,7 @@ class RecyclerAdapter(private var notes: MutableList<CreatingNewNotes> = mutable
 
         override fun onClick(v: View?) {
 
+
         }
     }
 
