@@ -10,6 +10,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
+import kotlinx.android.synthetic.main.activity_sign_up.*
 
 const val TAG: String = "EmailPassword"
 
@@ -34,8 +35,8 @@ class SignUpActivity : AppCompatActivity(), View.OnClickListener {
         mAuth = FirebaseAuth.getInstance();
         // [END initialize_auth]
 
-        findViewById<Button>(R.id.buttonRegister).setOnClickListener(this)
-        findViewById<Button>(R.id.buttonSignIn).setOnClickListener(this)
+        buttonRegister.setOnClickListener(this)
+        buttonSignIn.setOnClickListener(this)
 
         service = Service()
 
