@@ -67,6 +67,7 @@ class CreateNewNoteFragment: Fragment(){
             val notesList = mutableListOf<CreatingNewNotes>()
             notesList.add(newNotes)
 
+            //Storing the data to firebase authentication
             val firebaseDatabase = FirebaseDatabase.getInstance()
             val firebaseReference = firebaseDatabase.reference
             firebaseReference.child("FunDo Note Data").push().setValue(notesList)
