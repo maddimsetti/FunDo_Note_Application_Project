@@ -56,4 +56,8 @@ class RemainderFragment : Fragment() {
                 }
             }
     }
+
+    override fun onStart() {
+        super.onStart()
+    }
 }
