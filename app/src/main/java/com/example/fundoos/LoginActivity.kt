@@ -285,11 +285,4 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
             }
         }
     }
-
-//    override fun onResetPassword(status: Boolean) {
-//        if(status) {
-//            Toast.makeText(applicationContext, "Reset Password Link Sent To Mail", Toast.LENGTH_LONG).show()
-//        }
-//    }
-
 }
