@@ -56,4 +56,8 @@ class DeletedFragment : Fragment() {
                 }
             }
     }
+
+    override fun onStart() {
+        super.onStart()
+    }
 }
