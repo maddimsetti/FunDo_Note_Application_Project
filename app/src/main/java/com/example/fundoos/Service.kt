@@ -57,6 +57,7 @@ class Service {
 
         mAuth.sendPasswordResetEmail(email).addOnCompleteListener() { task ->
             if(task.isSuccessful) {
+                //When click on Forgot, the password reset link sent to registered mail
                 Log.d(TAG, "SendResetPasswordLinkToMail:Success")
                 listener.onResetPassword(true)
             }
