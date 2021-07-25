@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "681221151983",
+    "project_id": "fundoos-84ad7",
+    "storage_bucket": "fundoos-84ad7.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:681221151983:android:c7e650a2f8066224a98f1a",
+        "android_client_info": {
+          "package_name": "com.example.fundoos"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "681221151983-qgqg408snhun6o852pbq0267shoqhi4m.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDLynE1Ids6QD-1xI1hDnKIkuzqG3OgEE8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "681221151983-qgqg408snhun6o852pbq0267shoqhi4m.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

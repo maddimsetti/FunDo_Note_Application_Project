@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">FunDo Notes</string>
+    <string name="forgot_password">Forgot Password?</string>
+    <string name="login">Login</string>
+
+    <string name="facebook_app_id">940134643385695</string>
+    <string name="fb_login_protocol_scheme">fb940134643385695</string>
+
+    <string name="Open">Open</string>
+    <string name="Close">Close</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="notes_fragment">Notes Fragment</string>
+    <string name="update">Update</string>
+    <string name="delete">Delete</string>
+
+</resources>
