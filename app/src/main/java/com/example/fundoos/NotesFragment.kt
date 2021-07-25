@@ -50,10 +50,10 @@ class NotesFragment : Fragment() {
 //    }
 //
 //    private fun getNotesList(): MutableList<CreatingNewNotes>? {
-//        //creating the instance of DatabaseHandler class
+//        creating the instance of DatabaseHandler class
 //        var output: MutableList<CreatingNewNotes>? = null
 //        val dataBaseHandler: DataBaseHandler? = activity?.let { DataBaseHandler(it.applicationContext) }
-//        //calling the viewNotes method of DataBaseHandler
+//        calling the viewNotes method of DataBaseHandler
 //
 //        if (dataBaseHandler != null) {
 //            output = dataBaseHandler.viewNotes()
