@@ -1,5 +1,7 @@
 package com.example.fundoos
 
+import android.app.AlertDialog
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -16,8 +18,6 @@ import java.text.SimpleDateFormat
 class CreateNewNoteFragment: Fragment(){
 
     private var currentDate: String? = null
-
-    lateinit var homeActivity: HomeActivity
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,14 +41,16 @@ class CreateNewNoteFragment: Fragment(){
 
         create_newNote_dateTime.text = currentDate
 
-        homeActivity = HomeActivity()
-
         backButton_new_note.setOnClickListener(View.OnClickListener {
             activity?.onBackPressed()
         })
 
         save_new_note.setOnClickListener() {
             saveNote()
+        }
+
+        archieve_new_note.setOnClickListener() {
+//            deleteRecordAlertDialog()
         }
 
     }
@@ -60,7 +62,7 @@ class CreateNewNoteFragment: Fragment(){
 
         val dataBaseHandler: DataBaseHandler? = activity?.let { DataBaseHandler(it.applicationContext) }
         if(!title.isNullOrEmpty() && !notes.isNullOrEmpty()) {
-            val status = dataBaseHandler?.addNewNotes(CreatingNewNotes(0, title, notes, dateTime))
+            val status = dataBaseHandler?.addNewNotes(CreatingNewNotes(id, title, notes, dateTime))
 
             //Storing the Data in Firebase Database
             val newNotes = CreatingNewNotes(id = id, title = title, notes = notes, dateTime = dateTime)
