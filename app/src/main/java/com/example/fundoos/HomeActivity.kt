@@ -18,9 +18,14 @@ import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.firebase.ui.database.FirebaseRecyclerOptions
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.UserProfileChangeRequest
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.karumi.dexter.Dexter
@@ -37,6 +42,7 @@ import kotlinx.android.synthetic.main.activity_home.*
 import kotlinx.android.synthetic.main.custom_toolbar.*
 import kotlinx.android.synthetic.main.dialog_signout_box.view.*
 import kotlinx.android.synthetic.main.nav_header.*
+import kotlinx.android.synthetic.main.recyclerview_item_row.*
 import java.io.ByteArrayOutputStream
 
 class HomeActivity : AppCompatActivity() {
@@ -46,9 +52,10 @@ class HomeActivity : AppCompatActivity() {
     private lateinit var mAuth: FirebaseAuth
 
     private lateinit var profileImage: CircleImageView
+    private lateinit var navigationImage: CircleImageView
 
-    private  val CAMERA_REQUEST_CODE = 123
-    private  val GALLERY_REQUEST_CODE = 214
+    private val CAMERA_REQUEST_CODE = 123
+    private val GALLERY_REQUEST_CODE = 214
 
     lateinit var notesAdapter: RecyclerAdapter
 
@@ -62,64 +69,91 @@ class HomeActivity : AppCompatActivity() {
 
         onTheNaviagtionItemSelected()
 
-        if(savedInstanceState == null) {
-            supportFragmentManager.beginTransaction().replace(R.id.fragment_Container, NotesFragment())
+        if (savedInstanceState == null) {
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.fragment_Container, NotesFragment())
                 .setReorderingAllowed(true).addToBackStack(null).commit()
             nav_view.setCheckedItem(R.id.nav_notes)
         }
 
         mAuth = FirebaseAuth.getInstance()
 
+        notesAdapter = RecyclerAdapter(this@HomeActivity)
+
         profileImage = toolbar_profile_image as CircleImageView
+//        navigationImage = navigation_profile_image as CircleImageView
 
         onClickSelectedItem()
 
         setupListOfDataIntiRecyclerView()
 
-        val str = intent.getStringExtra("image")
+
+//        val str = intent.getStringExtra("email")
 //        eMail_navigationView.setText(str)
-        val str1 = intent.getStringExtra("picture")
+//        val str1 = intent.getStringExtra("picture")
 //        Picasso.with(applicationContext).load(str1).error(R.drawable.note_fundo).into(image_navigationView)
+    }
+
+    override fun onStart() {
+        super.onStart()
+        val currentUser = mAuth.currentUser
+        updateUI(currentUser)
+    }
+
+    override fun onRestart() {
+        super.onRestart()
+        startActivity(intent)
+    }
+
+
+    private fun updateUI(currentUser: FirebaseUser?) {
+        if (currentUser?.photoUrl != null) {
+            Picasso.with(this@HomeActivity).load(currentUser.photoUrl).into(profileImage)
+//            Picasso.with(this@HomeActivity).load(currentUser.photoUrl).into(navigationImage)
+
+        }
     }
 
     private fun onClickSelectedItem() {
         profileImage.setOnClickListener {
             selectingImage()
             Toast.makeText(this@HomeActivity, "Image Clicked", Toast.LENGTH_SHORT).show()
-
-            val user = FirebaseAuth.getInstance().currentUser
-
-
-            if(user?.photoUrl != null) {
-                Picasso.with(this@HomeActivity).load(user.photoUrl).into(profileImage)
-                Picasso.with(this@HomeActivity).load(user.photoUrl).into(image_navigationView)
-            }
         }
 
         create_new_note.setOnClickListener() {
-            supportFragmentManager.beginTransaction().replace(R.id.create_fragment_container, CreateNewNoteFragment())
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.create_fragment_container, CreateNewNoteFragment())
                 .setReorderingAllowed(true).addToBackStack(null).commit()
             Toast.makeText(applicationContext, "Creating New Note", Toast.LENGTH_SHORT).show()
 
         }
+
     }
 
     private fun setupListOfDataIntiRecyclerView() {
 
-        if(getNotesList()?.size!! > 0) {
+        if (getNotesList()?.size!! > 0) {
             recycler_view.visibility = View.VISIBLE
 
             recycler_view.apply {
                 layoutManager = LinearLayoutManager(this@HomeActivity)
+
                 val topSpacingItemDecoration = TopSpacingItemDecoration(30)
                 addItemDecoration(topSpacingItemDecoration)
-                notesAdapter = RecyclerAdapter(getNotesList())
+                notesAdapter = RecyclerAdapter(this@HomeActivity, getNotesList())
+
+//                var options: FirebaseRecyclerOptions<CreatingNewNotes> = FirebaseRecyclerOptions.Builder<CreatingNewNotes>()
+//                    .setQuery(recyclerDatabase.child("FunDo Note Data").equalTo(false), CreatingNewNotes::class.java).build()
+
+//                notesAdapter = RecyclerAdapter(options, this@HomeActivity)
                 adapter = notesAdapter
+                notesAdapter.notifyDataSetChanged()
+
             }
         } else {
             recycler_view.visibility = View.GONE
         }
-
+        recycler_view.smoothScrollToPosition(0)
     }
 
     private fun getNotesList(): MutableList<CreatingNewNotes> {
@@ -133,9 +167,10 @@ class HomeActivity : AppCompatActivity() {
     private fun selectingImage() {
         val pictureDialog = AlertDialog.Builder(this)
         pictureDialog.setTitle("Select Action")
-        val pictureDialogItem = arrayOf("Select photo from Gallery", "Capture Photo from Camera" )
+        val pictureDialogItem =
+            arrayOf("Select photo from Gallery", "Capture Photo from Camera")
         pictureDialog.setItems(pictureDialogItem) { dialog, selection ->
-            when(selection) {
+            when (selection) {
                 0 -> galleryCheckPermission(this@HomeActivity)
                 1 -> cameraCheckPermission(this@HomeActivity)
             }
@@ -149,14 +184,15 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun setNavigationDrawer() {
-        toggle = ActionBarDrawerToggle(this, drawerLayout, my_toolbar, R.string.Open, R.string.Close)
+        toggle =
+            ActionBarDrawerToggle(this, drawerLayout, my_toolbar, R.string.Open, R.string.Close)
         drawerLayout.addDrawerListener(toggle)
         toggle.isDrawerIndicatorEnabled = true
         toggle.syncState()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if(toggle.onOptionsItemSelected(item)) {
+        if (toggle.onOptionsItemSelected(item)) {
             return true
         }
         return super.onOptionsItemSelected(item)
@@ -164,25 +200,31 @@ class HomeActivity : AppCompatActivity() {
 
     private fun onTheNaviagtionItemSelected() {
         nav_view.setNavigationItemSelectedListener {
-            when(it.itemId) {
+            when (it.itemId) {
                 R.id.nav_notes -> {
-                    supportFragmentManager.beginTransaction().replace(R.id.fragment_Container, NotesFragment())
+                    supportFragmentManager.beginTransaction()
+                        .replace(R.id.create_fragment_container, NotesFragment())
                         .setReorderingAllowed(true).addToBackStack(null).commit()
-                    Toast.makeText(applicationContext, "Notes Fragment", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(applicationContext, "Notes Fragment", Toast.LENGTH_SHORT)
+                        .show()
                 }
                 R.id.nav_remainder -> {
-                    supportFragmentManager.beginTransaction().replace(R.id.fragment_Container, RemainderFragment())
+                    supportFragmentManager.beginTransaction()
+                        .replace(R.id.create_fragment_container, RemainderFragment())
                         .setReorderingAllowed(true).addToBackStack(null).commit()
-                    Toast.makeText(applicationContext, "Remainder Fragment", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(applicationContext, "Remainder Fragment", Toast.LENGTH_SHORT)
+                        .show()
                 }
                 R.id.nav_archive -> {
-                    supportFragmentManager.beginTransaction().replace(R.id.fragment_Container, ArchiveFragment())
+                    supportFragmentManager.beginTransaction()
+                        .replace(R.id.create_fragment_container, ArchiveFragment())
                         .setReorderingAllowed(true).addToBackStack(null).commit()
                     Toast.makeText(applicationContext, "Archive Fragment", Toast.LENGTH_SHORT)
                         .show()
                 }
                 R.id.nav_deleted -> {
-                    supportFragmentManager.beginTransaction().replace(R.id.fragment_Container, DeletedFragment())
+                    supportFragmentManager.beginTransaction()
+                        .replace(R.id.create_fragment_container, DeletedFragment())
                         .setReorderingAllowed(true).addToBackStack(null).commit()
                     Toast.makeText(applicationContext, "Deleted Fragment", Toast.LENGTH_SHORT)
                         .show()
@@ -201,7 +243,7 @@ class HomeActivity : AppCompatActivity() {
 
     fun layOut() {
         val builder = AlertDialog.Builder(this)
-        val view = layoutInflater.inflate(R.layout.dialog_signout_box,null)
+        val view = layoutInflater.inflate(R.layout.dialog_signout_box, null)
         view.dialog_signOut
         builder.setView(view)
         builder.setPositiveButton("Confirm") { _, _ ->
@@ -220,7 +262,7 @@ class HomeActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        if(drawerLayout.isDrawerOpen(GravityCompat.START)) {
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
             drawerLayout.closeDrawer(GravityCompat.START)
         } else {
             super.onBackPressed()
@@ -231,14 +273,16 @@ class HomeActivity : AppCompatActivity() {
 
         Dexter.withContext(context).withPermission(
             android.Manifest.permission.READ_EXTERNAL_STORAGE
-        ).withListener(object: PermissionListener {
+        ).withListener(object : PermissionListener {
             override fun onPermissionGranted(p0: PermissionGrantedResponse?) {
-               gallery()
+                gallery()
             }
 
             override fun onPermissionDenied(p0: PermissionDeniedResponse?) {
-                Toast.makeText(context, "You have denied the storage to select Image",
-                    Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    context, "You have denied the storage to select Image",
+                    Toast.LENGTH_SHORT
+                ).show()
                 showRotationalDialogForPermission(context)
             }
 
@@ -255,11 +299,12 @@ class HomeActivity : AppCompatActivity() {
 
         Dexter.withContext(context).withPermissions(
             android.Manifest.permission.READ_EXTERNAL_STORAGE,
-            android.Manifest.permission.CAMERA).withListener(
-            object: MultiplePermissionsListener {
+            android.Manifest.permission.CAMERA
+        ).withListener(
+            object : MultiplePermissionsListener {
                 override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
                     report?.let {
-                        if(report.areAllPermissionsGranted()) {
+                        if (report.areAllPermissionsGranted()) {
                             camera()
                         }
                     }
@@ -289,10 +334,12 @@ class HomeActivity : AppCompatActivity() {
     }
 
     fun showRotationalDialogForPermission(context: Context) {
-        android.app.AlertDialog.Builder(context).setMessage("It looks like you have turned off Permissions"
-                + "required for this feature. It can be enable under App Settings")
+        android.app.AlertDialog.Builder(context).setMessage(
+            "It looks like you have turned off Permissions"
+                    + "required for this feature. It can be enable under App Settings"
+        )
 
-            .setPositiveButton("Go To Settings")  { _, _ ->
+            .setPositiveButton("Go To Settings") { _, _ ->
                 try {
                     val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
                     val uri = Uri.fromParts("package", "packageName", null)
@@ -302,7 +349,7 @@ class HomeActivity : AppCompatActivity() {
                     e.printStackTrace()
                 }
             }
-            .setNegativeButton("Cancel") { dialog,_ ->
+            .setNegativeButton("Cancel") { dialog, _ ->
                 dialog.dismiss()
             }.show()
     }
@@ -310,13 +357,13 @@ class HomeActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        if(resultCode == Activity.RESULT_OK) {
-            when(requestCode) {
+        if (resultCode == Activity.RESULT_OK) {
+            when (requestCode) {
                 CAMERA_REQUEST_CODE -> {
                     gettingDataAsBitmap(data)
-                    }
+                }
 
-                GALLERY_REQUEST_CODE -> { 
+                GALLERY_REQUEST_CODE -> {
                     gettingDataAsBitmap(data)
                 }
             }
@@ -324,7 +371,7 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun gettingDataAsBitmap(data: Intent?) {
-        val bitmap =  data?.extras?.get("data") as? Bitmap
+        val bitmap = data?.extras?.get("data") as? Bitmap
         profileImage.setImageBitmap(bitmap)
         if (bitmap != null) {
             handleUpload(bitmap)
@@ -338,14 +385,14 @@ class HomeActivity : AppCompatActivity() {
 
         val uid = FirebaseAuth.getInstance().currentUser?.uid
         val reference: StorageReference = FirebaseStorage.getInstance().reference
-                                          .child("ProfileImages")
-                                          .child("$uid.jpeg")
+            .child("ProfileImages")
+            .child("$uid.jpeg")
 
         reference.putBytes(boas.toByteArray()).addOnSuccessListener {
             getDownloadUrl(reference)
         }
             .addOnFailureListener {
-                Log.e(TAG,"OnFailure: ", it)
+                Log.e(TAG, "OnFailure: ", it)
             }
     }
 
@@ -378,4 +425,5 @@ class HomeActivity : AppCompatActivity() {
             }
 
     }
+
 }
