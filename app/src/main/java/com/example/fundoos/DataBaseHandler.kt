@@ -89,16 +89,15 @@ class DataBaseHandler(context: Context):
     }
 
     //Update the notes
-    fun updateNotes(notes: CreatingNewNotes): Int {
+    fun updateNotes(id: Int, title: String, note: String, dateTime: String): Int {
         val database = this.writableDatabase
         val contentValues = ContentValues()
-        contentValues.put(Notes_Title, notes.title)
-        contentValues.put(Notes_note, notes.notes)
-        contentValues.put(Notes_dateTime,notes.dateTime)
+        contentValues.put(Notes_Title, title)
+        contentValues.put(Notes_note, note)
+        contentValues.put(Notes_dateTime,dateTime)
 
         //Updating Row
-        val success = database.update(TABLE_NAME, contentValues, Notes_ID + "=" +notes.id, null)
-
+        val success = database.update(TABLE_NAME, contentValues, "$Notes_ID = $id", null)
         database.close()
         return success
     }

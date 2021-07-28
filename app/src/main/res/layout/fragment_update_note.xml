@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    android:orientation="vertical"
+    android:background="@color/white"
+    tools:context=".UpdateNoteFragment"
+    tools:openDrawer="start">
+
+    <!-- TODO: Update blank fragment layout -->
+    <ScrollView
+        android:id="@+id/new_note_scrollView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        app:layout_anchorGravity="center"
+        android:clipToPadding="false"
+        android:paddingBottom="10dp">
+
+        <include layout="@layout/custom_create_new_note_toolbar" />
+
+
+    </ScrollView>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <EditText
+            android:id="@+id/Update_Note_Title"
+            android:layout_width="match_parent"
+            android:layout_height="64dp"
+            android:layout_marginTop="144dp"
+            android:layout_marginStart="15dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:background="@null"
+            android:fontFamily="sans-serif"
+            android:gravity="start"
+            android:hint="Title"
+            android:importantForAutofill="no"
+            android:includeFontPadding="false"
+            android:inputType="text"
+            android:textAlignment="textStart"
+            android:textColor="#101010"
+            android:textSize="24dp"
+            app:layout_constraintBottom_toTopOf="@+id/Update_Note_Content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <EditText
+            android:id="@+id/Update_Note_Content"
+            android:layout_width="match_parent"
+            android:layout_height="223dp"
+            android:layout_marginBottom="356dp"
+            android:layout_marginStart="15dp"
+            android:layout_marginEnd="8dp"
+            android:background="@null"
+            android:fontFamily="sans-serif"
+            android:gravity="start"
+            android:hint="Note"
+            android:importantForAutofill="no"
+            android:minHeight="200dp"
+            android:includeFontPadding="false"
+            android:inputType="textMultiLine"
+            android:textColor="#101010"
+            android:textSize="20dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/Update_Note_Title" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <com.google.android.material.bottomappbar.BottomAppBar
+        android:id="@+id/create_new_bottomAppBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:elevation="30dp"
+        app:fabCradleMargin="25dp"
+        app:fabCradleVerticalOffset="10dp"
+        app:fabCradleRoundedCornerRadius="30dp"
+        android:layout_gravity="bottom">
+
+        <TextView
+            android:id="@+id/update_newNote_dateTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:ellipsize="end"
+            android:hint="Date Time"
+            android:maxLines="1"
+            android:textColor="@color/design_default_color_error"
+            android:textSize="15dp"
+            android:textStyle="bold"
+            tools:layout_editor_absoluteX="261dp"
+            tools:layout_editor_absoluteY="688dp" />
+
+    </com.google.android.material.bottomappbar.BottomAppBar>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

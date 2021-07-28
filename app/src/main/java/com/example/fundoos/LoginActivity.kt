@@ -175,7 +175,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
                 Log.d("FacebookAuthentication", "onSuccess$result")
                 handleFacebookToken(result?.accessToken)
                 val intent = Intent(this@LoginActivity, HomeActivity::class.java)
-                intent.putExtra("image", "xyz")
+                intent.putExtra("eMail", "email")
                 startActivity(intent)
             }
 
