@@ -33,7 +33,6 @@ class CreateNewNoteFragment: Fragment(){
 
     }
 
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val dateAndTime = SimpleDateFormat("dd/mm/yyyy hh:mm:ss")
@@ -49,10 +48,6 @@ class CreateNewNoteFragment: Fragment(){
             saveNote()
         }
 
-        archieve_new_note.setOnClickListener() {
-//            deleteRecordAlertDialog()
-        }
-
     }
 
     private fun saveNote() {
@@ -62,11 +57,11 @@ class CreateNewNoteFragment: Fragment(){
 
         val dataBaseHandler: DataBaseHandler? = activity?.let { DataBaseHandler(it.applicationContext) }
         if(!title.isNullOrEmpty() && !notes.isNullOrEmpty()) {
-            val status = dataBaseHandler?.addNewNotes(CreatingNewNotes(id, title, notes, dateTime))
+            val status = dataBaseHandler?.addNewNotes(Notes(id, title, notes, dateTime))
 
             //Storing the Data in Firebase Database
-            val newNotes = CreatingNewNotes(id = id, title = title, notes = notes, dateTime = dateTime)
-            val notesList = mutableListOf<CreatingNewNotes>()
+            val newNotes = Notes(id = id, title = title, notes = notes, dateTime = dateTime)
+            val notesList = mutableListOf<Notes>()
             notesList.add(newNotes)
 
             //Storing the data to firebase authentication
@@ -84,6 +79,5 @@ class CreateNewNoteFragment: Fragment(){
         } else {
             Toast.makeText(context, "Title or Notes Cannot be Empty", Toast.LENGTH_SHORT).show()
         }
-
     }
 }

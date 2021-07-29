@@ -36,7 +36,7 @@ class DataBaseHandler(context: Context):
         onCreate(database)
     }
 
-    fun addNewNotes(notes: CreatingNewNotes): Long {
+    fun addNewNotes(notes: Notes): Long {
 
         val database = this.writableDatabase
 
@@ -54,9 +54,9 @@ class DataBaseHandler(context: Context):
     }
 
     //method to read data
-    fun viewNotes(): MutableList<CreatingNewNotes> {
+    fun viewNotes(): MutableList<Notes> {
 
-        val notesList = mutableListOf<CreatingNewNotes>()
+        val notesList = mutableListOf<Notes>()
         val selectQuery = "SELECT * FROM $TABLE_NAME"
 
         val database = this.readableDatabase
@@ -81,7 +81,7 @@ class DataBaseHandler(context: Context):
                 notes = cursor.getString(cursor.getColumnIndex(Notes_note))
                 dateTime = cursor.getString(cursor.getColumnIndex(Notes_dateTime))
 
-                val newNotes = CreatingNewNotes(id = id, title = title, notes = notes, dateTime = dateTime)
+                val newNotes = Notes(id = id, title = title, notes = notes, dateTime = dateTime)
                 notesList.add(newNotes)
             } while (cursor.moveToNext())
         }
@@ -102,7 +102,7 @@ class DataBaseHandler(context: Context):
         return success
     }
 
-    fun deleteNotes(notes: CreatingNewNotes): Int {
+    fun deleteNotes(notes: Notes): Int {
         val database = this.writableDatabase
         val contentValues = ContentValues()
         contentValues.put(Notes_ID, notes.id)

@@ -156,7 +156,7 @@ class HomeActivity : AppCompatActivity() {
         recycler_view.smoothScrollToPosition(0)
     }
 
-    private fun getNotesList(): MutableList<CreatingNewNotes> {
+    private fun getNotesList(): MutableList<Notes> {
         //creating the instance of DatabaseHandler class
         val dataBaseHandler: DataBaseHandler = DataBaseHandler(this@HomeActivity)
         //calling the viewNotes method of DataBaseHandler

@@ -13,5 +13,6 @@
     <string name="notes_fragment">Notes Fragment</string>
     <string name="update">Update</string>
     <string name="delete">Delete</string>
+    <string name="edit">Edit</string>
 
 </resources>

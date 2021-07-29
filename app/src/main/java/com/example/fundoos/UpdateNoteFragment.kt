@@ -60,11 +60,7 @@ class UpdateNoteFragment : Fragment() {
                     Update_Note_Content.text.clear()
                 }
             }
-
-
         }
-
-
     }
 
     fun getAndSetIntentData() {
@@ -81,6 +77,7 @@ class UpdateNoteFragment : Fragment() {
             //setting Intent Data
             Update_Note_Title.setText(titleText)
             Update_Note_Content.setText(contentText)
+
         } else {
             Toast.makeText(context, "No Data available", Toast.LENGTH_SHORT).show()
         }
