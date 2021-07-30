@@ -13,19 +13,17 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
-import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.firebase.ui.database.FirebaseRecyclerOptions
+import com.example.fundoos.fragments.ArchiveFragment
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.UserProfileChangeRequest
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.karumi.dexter.Dexter
@@ -39,11 +37,15 @@ import com.karumi.dexter.listener.single.PermissionListener
 import com.squareup.picasso.Picasso
 import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.android.synthetic.main.activity_home.*
+import kotlinx.android.synthetic.main.activity_home.recycler_view
 import kotlinx.android.synthetic.main.custom_toolbar.*
 import kotlinx.android.synthetic.main.dialog_signout_box.view.*
+import kotlinx.android.synthetic.main.fragment_notes.*
 import kotlinx.android.synthetic.main.nav_header.*
 import kotlinx.android.synthetic.main.recyclerview_item_row.*
 import java.io.ByteArrayOutputStream
+import java.util.*
+import kotlin.collections.ArrayList
 
 class HomeActivity : AppCompatActivity() {
 
@@ -57,7 +59,9 @@ class HomeActivity : AppCompatActivity() {
     private val CAMERA_REQUEST_CODE = 123
     private val GALLERY_REQUEST_CODE = 214
 
-    lateinit var notesAdapter: RecyclerAdapter
+    var displayList: MutableList<Notes> = ArrayList()
+
+    private lateinit var notesAdapter: RecyclerAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -100,6 +104,7 @@ class HomeActivity : AppCompatActivity() {
         updateUI(currentUser)
     }
 
+
     override fun onRestart() {
         super.onRestart()
         startActivity(intent)
@@ -137,22 +142,25 @@ class HomeActivity : AppCompatActivity() {
 
             recycler_view.apply {
                 layoutManager = LinearLayoutManager(this@HomeActivity)
+//                layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
 
                 val topSpacingItemDecoration = TopSpacingItemDecoration(30)
                 addItemDecoration(topSpacingItemDecoration)
-                notesAdapter = RecyclerAdapter(this@HomeActivity, getNotesList())
+                notesAdapter = RecyclerAdapter(this@HomeActivity, displayList)
 
 //                var options: FirebaseRecyclerOptions<CreatingNewNotes> = FirebaseRecyclerOptions.Builder<CreatingNewNotes>()
 //                    .setQuery(recyclerDatabase.child("FunDo Note Data").equalTo(false), CreatingNewNotes::class.java).build()
-
 //                notesAdapter = RecyclerAdapter(options, this@HomeActivity)
+
+//                tempArrayList.addAll(getNotesList())
                 adapter = notesAdapter
-                notesAdapter.notifyDataSetChanged()
+
 
             }
         } else {
             recycler_view.visibility = View.GONE
         }
+        notesAdapter.notifyDataSetChanged()
         recycler_view.smoothScrollToPosition(0)
     }
 
@@ -163,6 +171,48 @@ class HomeActivity : AppCompatActivity() {
 
         return dataBaseHandler.viewNotes()
     }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        setNavigationDrawer()
+
+        menuInflater.inflate(R.menu.search_recycler_items, menu)
+        val searchItem = menu?.findItem(R.id.search_recycler_view)
+        if (searchItem != null) {
+            val searchView = searchItem.actionView as androidx.appcompat.widget.SearchView
+            val editText =
+                searchView.findViewById<EditText>(androidx.appcompat.R.id.search_src_text)
+            editText.hint = "search notes here"
+            searchView.setOnQueryTextListener(object :
+                androidx.appcompat.widget.SearchView.OnQueryTextListener {
+                override fun onQueryTextSubmit(query: String?): Boolean {
+                    return true
+                }
+
+                override fun onQueryTextChange(newText: String?): Boolean {
+                    if (newText!!.isNotEmpty()) {
+//                        diaplayList.clear()
+                        val search = newText.lowercase(Locale.getDefault())
+
+                        getNotesList().forEach {
+                            if (it.title.lowercase(Locale.getDefault()).contains(search)) {
+                                displayList.add(it)
+                            }
+                            recycler_view.adapter?.notifyDataSetChanged()
+                        }
+                    } else {
+                        displayList.clear()
+                        displayList.addAll(getNotesList())
+                        recycler_view.adapter?.notifyDataSetChanged()
+                    }
+
+                    return true
+                }
+
+            })
+        }
+        return super.onCreateOptionsMenu(menu)
+    }
+
 
     private fun selectingImage() {
         val pictureDialog = AlertDialog.Builder(this)
@@ -176,11 +226,6 @@ class HomeActivity : AppCompatActivity() {
             }
         }
         pictureDialog.show()
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        setNavigationDrawer()
-        return super.onCreateOptionsMenu(menu)
     }
 
     private fun setNavigationDrawer() {
