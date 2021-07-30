@@ -23,6 +23,8 @@ class RecyclerAdapter(
 ) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
+
+
     inner class NotesViewHolder(notesView: View) : RecyclerView.ViewHolder(notesView),
         View.OnClickListener {
         private var notesTitle: TextView = notesView.recycler_title
@@ -139,18 +141,22 @@ class RecyclerAdapter(
         builder.show()
     }
 
-    private fun deleteRecordAlertDialog(notes: Notes) {
+    private fun deleteRecordAlertDialog(note: Notes) {
         val builder = AlertDialog.Builder(context)
         //set title for alert dialog
         builder.setTitle("Delete Note Record")
-        builder.setMessage("Are you sure You wants to delete ${notes.id}")
+        builder.setMessage("Are you sure You wants to delete ${note.id}")
         builder.setIcon(android.R.drawable.ic_dialog_alert)
 
         builder.setPositiveButton("Ok") { dialogInterface, which ->
             val dataBaseHandler: DataBaseHandler? = context?.let { DataBaseHandler(it) }
-            val status = dataBaseHandler?.deleteNotes(Notes(notes.id, "", "", ""))
+            val status = dataBaseHandler?.deleteNotes(Notes(note.id, "", "", ""))
             if (status != null) {
-                if (status > -1) {
+                if (status > 0) {
+//                    notes.forEach {
+//                        if (it.id == note.id)
+//                            notes.remove(it)
+//                    }
                     Toast.makeText(context, "Record Delete Successfully", Toast.LENGTH_SHORT).show()
                 }
 

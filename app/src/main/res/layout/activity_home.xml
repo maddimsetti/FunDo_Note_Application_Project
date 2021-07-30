@@ -20,7 +20,8 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <include layout="@layout/custom_toolbar" />
+            <include layout="@layout/custom_toolbar"
+                />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recycler_view"

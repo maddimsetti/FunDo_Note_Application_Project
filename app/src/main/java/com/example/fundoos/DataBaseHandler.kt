@@ -6,6 +6,7 @@ import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteException
 import android.database.sqlite.SQLiteOpenHelper
+import android.util.Log
 
 class DataBaseHandler(context: Context):
     SQLiteOpenHelper(context, DATABASE_NAME,null, DATABASE_VERSION ) {
@@ -109,6 +110,7 @@ class DataBaseHandler(context: Context):
         //Deleting the Row
         val success = database.delete(TABLE_NAME, Notes_ID + "=" +notes.id, null)
         database.close()
+        Log.d(TAG, "deleteNotes: $success")
         return success
     }
 }

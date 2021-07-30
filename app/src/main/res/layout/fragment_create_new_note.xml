@@ -10,20 +10,20 @@
     tools:context=".CreateNewNoteFragment"
     tools:openDrawer="start">
 
-<!--    &lt;!&ndash; TODO: Update blank fragment layout &ndash;&gt;-->
-<!--    <ScrollView-->
-<!--        android:id="@+id/new_note_scrollView"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_marginTop="20dp"-->
-<!--        app:layout_anchorGravity="center"-->
-<!--        android:clipToPadding="false"-->
-<!--        android:paddingBottom="10dp">-->
+    <!-- TODO: Update blank fragment layout -->
+    <ScrollView
+        android:id="@+id/new_note_scrollView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        app:layout_anchorGravity="center"
+        android:clipToPadding="false"
+        android:paddingBottom="10dp">
 
-<!--        <include layout="@layout/custom_create_new_note_toolbar" />-->
+        <include layout="@layout/custom_create_new_note_toolbar" />
 
 
-<!--    </ScrollView>-->
+    </ScrollView>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"

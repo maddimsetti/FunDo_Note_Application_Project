@@ -35,6 +35,7 @@ class CreateNewNoteFragment: Fragment(){
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         val dateAndTime = SimpleDateFormat("dd/mm/yyyy hh:mm:ss")
         currentDate = dateAndTime.format(java.util.Date())
 

@@ -299,7 +299,7 @@
                                 <PersistentState>
                                   <option name="values">
                                     <map>
-                                      <entry key="url" value="jar:file:/C:/Program%20Files/Android/Android%20Studio/plugins/android/lib/android.jar!/images/material/icons/materialicons/edit/baseline_edit_24.xml" />
+                                      <entry key="url" value="jar:file:/C:/Program%20Files/Android/Android%20Studio/plugins/android/lib/android.jar!/images/material/icons/materialicons/search/baseline_search_24.xml" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -309,9 +309,9 @@
                         </option>
                         <option name="values">
                           <map>
-                            <entry key="color" value="e02d33" />
+                            <entry key="color" value="ee0a4a" />
                             <entry key="opacityPercent" value="90" />
-                            <entry key="outputName" value="ic_recycler_edit" />
+                            <entry key="outputName" value="ic_search_item" />
                             <entry key="sourceFile" value="C:\Users\E BABU PRUDHVI\AndroidStudioProjects\Fundoos" />
                           </map>
                         </option>
