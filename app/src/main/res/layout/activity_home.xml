@@ -20,16 +20,12 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <include layout="@layout/custom_toolbar"
-                />
+            <include layout="@layout/custom_toolbar" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recycler_view"
                 android:layout_width="match_parent"
-                android:layout_height="648dp"
-                android:layout_marginStart="0dp"
-                android:layout_marginEnd="0dp"
-                android:layout_marginRight="0dp"
+                android:layout_height="600dp"
                 android:clipToPadding="false"
                 android:paddingStart="0dp"
                 android:paddingEnd="12dp"
@@ -50,8 +46,6 @@
             app:headerLayout="@layout/nav_header"
             app:menu="@menu/nav_header_menu"
             app:theme="@style/myNavigationDrawerStyle" />
-
-
 
     </androidx.drawerlayout.widget.DrawerLayout>
 

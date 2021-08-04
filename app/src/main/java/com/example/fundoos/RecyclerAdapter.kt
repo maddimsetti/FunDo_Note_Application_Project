@@ -2,18 +2,15 @@ package com.example.fundoos
 
 import android.app.AlertDialog
 import android.content.Context
-import android.content.Intent
-import android.os.Bundle
 import android.text.TextUtils
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.synthetic.main.fragment_create_new_note.*
+import com.google.firebase.database.*
 import kotlinx.android.synthetic.main.fragment_create_new_note.view.*
-import kotlinx.android.synthetic.main.fragment_update_note.*
 import kotlinx.android.synthetic.main.recyclerview_item_row.view.*
 import java.text.SimpleDateFormat
 
@@ -22,8 +19,6 @@ class RecyclerAdapter(
     private var notes: MutableList<Notes> = mutableListOf()
 ) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-
-
 
     inner class NotesViewHolder(notesView: View) : RecyclerView.ViewHolder(notesView),
         View.OnClickListener {
@@ -55,13 +50,6 @@ class RecyclerAdapter(
                 holder.menuItem.setOnClickListener() {
                     popupMenu(it, notes[position])
                 }
-//                holder.itemView.setOnClickListener() {
-//                    val updateNoteFragment: UpdateNoteFragment ?= null
-//                    var args: Bundle ?= null
-//                    args?.putString("Your key", "Your value")
-//                    updateNoteFragment?.arguments = args
-//
-//                }
             }
         }
     }
@@ -75,6 +63,7 @@ class RecyclerAdapter(
                 R.id.recycler_edit -> {
                     editRecordAlertDialog(notes)
                     Toast.makeText(context, "The Selected Notes Edited", Toast.LENGTH_SHORT).show()
+                    notifyDataSetChanged()
                     true
                 }
 
@@ -120,8 +109,18 @@ class RecyclerAdapter(
                 Toast.makeText(context, "Please Enter the Fields", Toast.LENGTH_SHORT).show()
             } else {
                 val status = dataBaseHandler?.updateNotes(notes.id, title, content, dateTime)
+
+                val newNotes = Notes(notes.id, title, content, dateTime)
+                val notesList = mutableListOf<Notes>()
+                notesList.add(newNotes)
+
+                //Storing the data to firebase authentication
+                val firebaseDatabase = FirebaseDatabase.getInstance()
+                val firebaseReference = firebaseDatabase.reference
+                firebaseReference.child("FunDo Note Data").push().setValue(notesList)
+
                 if (status != null) {
-                    if (status > -1) {
+                    if (status > 0) {
                         Toast.makeText(context, "Data Successfully submitted", Toast.LENGTH_SHORT)
                             .show()
                         titleField.text.clear()
@@ -149,8 +148,31 @@ class RecyclerAdapter(
         builder.setIcon(android.R.drawable.ic_dialog_alert)
 
         builder.setPositiveButton("Ok") { dialogInterface, which ->
+
+
             val dataBaseHandler: DataBaseHandler? = context?.let { DataBaseHandler(it) }
             val status = dataBaseHandler?.deleteNotes(Notes(note.id, "", "", ""))
+
+            val databaseReference: DatabaseReference = FirebaseDatabase.getInstance().getReference("FunDo Data").child(
+                "${note.id}"
+            )
+
+            databaseReference.removeValue()
+//            val query: Query = databaseReference.child("FunDo Data").orderByChild("title").equalTo("Firebase DataBase")
+
+//            query.addListenerForSingleValueEvent(object: ValueEventListener {
+//                override fun onDataChange(snapshot: DataSnapshot) {
+//                    for(noteSnapShoot: DataSnapshot in snapshot.children) {
+//                        noteSnapShoot.ref.removeValue()
+//                    }
+//                }
+//
+//                override fun onCancelled(databaseError: DatabaseError) {
+//                    Log.d(TAG, "onCancelled", databaseError.toException())
+//                }
+//
+//            })
+
             if (status != null) {
                 if (status > 0) {
 //                    notes.forEach {

@@ -19,11 +19,13 @@ import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.core.view.MenuItemCompat
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.example.fundoos.fragments.ArchiveFragment
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.UserProfileChangeRequest
+import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.karumi.dexter.Dexter
@@ -39,6 +41,7 @@ import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.android.synthetic.main.activity_home.*
 import kotlinx.android.synthetic.main.activity_home.recycler_view
 import kotlinx.android.synthetic.main.custom_toolbar.*
+import kotlinx.android.synthetic.main.custom_toolbar_profile.*
 import kotlinx.android.synthetic.main.dialog_signout_box.view.*
 import kotlinx.android.synthetic.main.fragment_notes.*
 import kotlinx.android.synthetic.main.nav_header.*
@@ -47,6 +50,7 @@ import java.io.ByteArrayOutputStream
 import java.util.*
 import kotlin.collections.ArrayList
 
+
 class HomeActivity : AppCompatActivity() {
 
     private lateinit var toggle: ActionBarDrawerToggle
@@ -54,12 +58,14 @@ class HomeActivity : AppCompatActivity() {
     private lateinit var mAuth: FirebaseAuth
 
     private lateinit var profileImage: CircleImageView
-    private lateinit var navigationImage: CircleImageView
+//    private lateinit var navigationImage: CircleImageView
 
     private val CAMERA_REQUEST_CODE = 123
     private val GALLERY_REQUEST_CODE = 214
 
     var displayList: MutableList<Notes> = ArrayList()
+
+    lateinit var dataList: MutableList<Notes>
 
     private lateinit var notesAdapter: RecyclerAdapter
 
@@ -71,7 +77,7 @@ class HomeActivity : AppCompatActivity() {
 
         my_toolbar.showOverflowMenu()
 
-        onTheNaviagtionItemSelected()
+        onTheNavigationItemSelected()
 
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction()
@@ -80,17 +86,20 @@ class HomeActivity : AppCompatActivity() {
             nav_view.setCheckedItem(R.id.nav_notes)
         }
 
-        mAuth = FirebaseAuth.getInstance()
-
-        notesAdapter = RecyclerAdapter(this@HomeActivity)
-
-        profileImage = toolbar_profile_image as CircleImageView
+        profileImage = toolbar_profile_image
 //        navigationImage = navigation_profile_image as CircleImageView
 
         onClickSelectedItem()
 
-        setupListOfDataIntiRecyclerView()
+        mAuth = FirebaseAuth.getInstance()
 
+        dataList = getNotesList()
+
+        notesAdapter = RecyclerAdapter(this@HomeActivity, dataList)
+        recycler_view.setAdapter(notesAdapter);
+
+
+        setupListOfDataIntiRecyclerView()
 
 //        val str = intent.getStringExtra("email")
 //        eMail_navigationView.setText(str)
@@ -102,20 +111,17 @@ class HomeActivity : AppCompatActivity() {
         super.onStart()
         val currentUser = mAuth.currentUser
         updateUI(currentUser)
+        create_new_note.visibility = View.VISIBLE
     }
-
 
     override fun onRestart() {
         super.onRestart()
-        startActivity(intent)
+        create_new_note.visibility = View.VISIBLE
     }
-
 
     private fun updateUI(currentUser: FirebaseUser?) {
         if (currentUser?.photoUrl != null) {
             Picasso.with(this@HomeActivity).load(currentUser.photoUrl).into(profileImage)
-//            Picasso.with(this@HomeActivity).load(currentUser.photoUrl).into(navigationImage)
-
         }
     }
 
@@ -125,14 +131,33 @@ class HomeActivity : AppCompatActivity() {
             Toast.makeText(this@HomeActivity, "Image Clicked", Toast.LENGTH_SHORT).show()
         }
 
+
+//        toolbar_searchView.setOnClickListener() {
+//            searchRecyclerView()
+//        }
+
+//        navigationImage.setOnClickListener() {
+//            Picasso.with(this@HomeActivity).load().into(navigationImage)
+
+//        }
+
         create_new_note.setOnClickListener() {
             supportFragmentManager.beginTransaction()
                 .replace(R.id.create_fragment_container, CreateNewNoteFragment())
                 .setReorderingAllowed(true).addToBackStack(null).commit()
+            create_new_note.visibility = View.GONE
             Toast.makeText(applicationContext, "Creating New Note", Toast.LENGTH_SHORT).show()
 
         }
 
+    }
+
+    private fun setNavigationDrawer() {
+        toggle =
+            ActionBarDrawerToggle(this, drawerLayout, my_toolbar, R.string.Open, R.string.Close)
+        drawerLayout.addDrawerListener(toggle)
+        toggle.isDrawerIndicatorEnabled = true
+        toggle.syncState()
     }
 
     private fun setupListOfDataIntiRecyclerView() {
@@ -141,26 +166,23 @@ class HomeActivity : AppCompatActivity() {
             recycler_view.visibility = View.VISIBLE
 
             recycler_view.apply {
-                layoutManager = LinearLayoutManager(this@HomeActivity)
-//                layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
+                layoutManager = StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL)
+//                view_change.setOnClickListener() {
+//                    layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
+//                    Toast.makeText(this@HomeActivity, "layout changes", Toast.LENGTH_SHORT).show()
+//
+//                }
 
                 val topSpacingItemDecoration = TopSpacingItemDecoration(30)
                 addItemDecoration(topSpacingItemDecoration)
-                notesAdapter = RecyclerAdapter(this@HomeActivity, displayList)
-
-//                var options: FirebaseRecyclerOptions<CreatingNewNotes> = FirebaseRecyclerOptions.Builder<CreatingNewNotes>()
-//                    .setQuery(recyclerDatabase.child("FunDo Note Data").equalTo(false), CreatingNewNotes::class.java).build()
-//                notesAdapter = RecyclerAdapter(options, this@HomeActivity)
-
-//                tempArrayList.addAll(getNotesList())
+                notesAdapter = RecyclerAdapter(this@HomeActivity, getNotesList())
                 adapter = notesAdapter
-
-
+                notesAdapter.notifyDataSetChanged()
             }
         } else {
             recycler_view.visibility = View.GONE
         }
-        notesAdapter.notifyDataSetChanged()
+
         recycler_view.smoothScrollToPosition(0)
     }
 
@@ -172,11 +194,48 @@ class HomeActivity : AppCompatActivity() {
         return dataBaseHandler.viewNotes()
     }
 
+//    private fun searchRecyclerView(menu: Menu?): Boolean {
+//        val searchItem = menu?.findItem(R.id.toolbar_searchView)
+//        if (searchItem != null) {
+//            val searchView = searchItem.actionView as androidx.appcompat.widget.SearchView
+//            val editText =
+//                searchView.findViewById<EditText>(androidx.appcompat.R.id.search_src_text)
+//            editText.hint = "search notes here"
+//            searchView.setOnQueryTextListener(object :
+//                androidx.appcompat.widget.SearchView.OnQueryTextListener {
+//                override fun onQueryTextSubmit(query: String?): Boolean {
+//                    return true
+//                }
+//
+//                override fun onQueryTextChange(newText: String?): Boolean {
+//                    if (newText!!.isNotEmpty()) {
+//                        displayList.clear()
+//                        val search = newText.lowercase(Locale.getDefault())
+//
+//                        getNotesList().forEach {
+//                            if (it.title.lowercase(Locale.getDefault()).contains(search)) {
+//                                displayList.add(it)
+//                            }
+//                            recycler_view.adapter?.notifyDataSetChanged()
+//                        }
+//
+//                    } else {
+//                        displayList.clear()
+//                        displayList.addAll(getNotesList())
+//                        recycler_view.adapter?.notifyDataSetChanged()
+//                    }
+//                    return true
+//                }
+//            })
+//        }
+//        return true
+//    }
+
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        setNavigationDrawer()
 
         menuInflater.inflate(R.menu.search_recycler_items, menu)
-        val searchItem = menu?.findItem(R.id.search_recycler_view)
+
+        val searchItem = menu?.findItem(R.id.toolbar_search_view)
         if (searchItem != null) {
             val searchView = searchItem.actionView as androidx.appcompat.widget.SearchView
             val editText =
@@ -190,7 +249,7 @@ class HomeActivity : AppCompatActivity() {
 
                 override fun onQueryTextChange(newText: String?): Boolean {
                     if (newText!!.isNotEmpty()) {
-//                        diaplayList.clear()
+                        displayList.clear()
                         val search = newText.lowercase(Locale.getDefault())
 
                         getNotesList().forEach {
@@ -199,6 +258,7 @@ class HomeActivity : AppCompatActivity() {
                             }
                             recycler_view.adapter?.notifyDataSetChanged()
                         }
+
                     } else {
                         displayList.clear()
                         displayList.addAll(getNotesList())
@@ -210,31 +270,26 @@ class HomeActivity : AppCompatActivity() {
 
             })
         }
+
+
+
+        val profileItem = menu?.findItem(R.id.toolbar_profile_imageView)
+        val profileView = MenuItemCompat.getActionView(profileItem)
+
+        val profile = profileView.findViewById(R.id.toolbar_profile_image) as CircleImageView
+        profile.setOnClickListener() {
+            selectingImage()
+            Toast.makeText(this, "profile Image Clicked", Toast.LENGTH_SHORT).show()
+        }
+
+
+
+
+        setNavigationDrawer()
         return super.onCreateOptionsMenu(menu)
     }
 
 
-    private fun selectingImage() {
-        val pictureDialog = AlertDialog.Builder(this)
-        pictureDialog.setTitle("Select Action")
-        val pictureDialogItem =
-            arrayOf("Select photo from Gallery", "Capture Photo from Camera")
-        pictureDialog.setItems(pictureDialogItem) { dialog, selection ->
-            when (selection) {
-                0 -> galleryCheckPermission(this@HomeActivity)
-                1 -> cameraCheckPermission(this@HomeActivity)
-            }
-        }
-        pictureDialog.show()
-    }
-
-    private fun setNavigationDrawer() {
-        toggle =
-            ActionBarDrawerToggle(this, drawerLayout, my_toolbar, R.string.Open, R.string.Close)
-        drawerLayout.addDrawerListener(toggle)
-        toggle.isDrawerIndicatorEnabled = true
-        toggle.syncState()
-    }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (toggle.onOptionsItemSelected(item)) {
@@ -243,7 +298,7 @@ class HomeActivity : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
-    private fun onTheNaviagtionItemSelected() {
+    private fun onTheNavigationItemSelected() {
         nav_view.setNavigationItemSelectedListener {
             when (it.itemId) {
                 R.id.nav_notes -> {
@@ -312,6 +367,20 @@ class HomeActivity : AppCompatActivity() {
         } else {
             super.onBackPressed()
         }
+    }
+
+    private fun selectingImage() {
+        val pictureDialog = AlertDialog.Builder(this)
+        pictureDialog.setTitle("Select Action")
+        val pictureDialogItem =
+            arrayOf("Select photo from Gallery", "Capture Photo from Camera")
+        pictureDialog.setItems(pictureDialogItem) { dialog, selection ->
+            when (selection) {
+                0 -> galleryCheckPermission(this@HomeActivity)
+                1 -> cameraCheckPermission(this@HomeActivity)
+            }
+        }
+        pictureDialog.show()
     }
 
     private fun galleryCheckPermission(context: Context) {

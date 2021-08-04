@@ -1,0 +1,8 @@
+package com.example.fundoos.utils
+
+object Constants {
+    val EXTRA_EXACT_ALARM_TIME = "EXTRA_EXACT_ALARM_TIME"
+
+    val ACTION_SET_EXACT = "ACTION_SET_EXTRA"
+    val ACTION_SET_REPETITIVE_EXACT = "ACTION_SET_REPETITIVE_EXACT"
+}

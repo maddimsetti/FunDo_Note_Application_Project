@@ -7,6 +7,8 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteException
 import android.database.sqlite.SQLiteOpenHelper
 import android.util.Log
+import com.google.firebase.database.FirebaseDatabase
+
 
 class DataBaseHandler(context: Context):
     SQLiteOpenHelper(context, DATABASE_NAME,null, DATABASE_VERSION ) {
@@ -86,6 +88,14 @@ class DataBaseHandler(context: Context):
                 notesList.add(newNotes)
             } while (cursor.moveToNext())
         }
+
+        if (notesList.size > 0) {
+            val ref = FirebaseDatabase.getInstance().reference.child("FunDo Data")
+            for (data in notesList) {
+                ref.push().setValue(data)
+            }
+        }
+
         return notesList
     }
 

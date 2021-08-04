@@ -2,11 +2,24 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <item
-        android:id="@+id/search_recycler_view"
-        android:title="Search"
-        android:icon="@drawable/ic_search_item"
-        app:showAsAction="always|collapseActionView"
-        app:actionViewClass="androidx.appcompat.widget.SearchView"/>
+        <item
+            android:id="@+id/toolbar_search_view"
+            android:title="Search"
+            android:icon="@drawable/ic_search_item"
+            app:showAsAction="always|collapseActionView"
+            app:actionViewClass="androidx.appcompat.widget.SearchView"/>
+
+        <item
+            android:id="@+id/toolbar_grid_view"
+            android:title="Search"
+            android:icon="@drawable/ic_grid_view"
+            app:showAsAction="ifRoom|collapseActionView" />
+
+        <item
+            android:id="@+id/toolbar_profile_imageView"
+            android:title="Search"
+            android:icon="@drawable/fundoos"
+            app:showAsAction="ifRoom|collapseActionView"
+            app:actionLayout="@layout/custom_toolbar_profile" />
 
 </menu>
