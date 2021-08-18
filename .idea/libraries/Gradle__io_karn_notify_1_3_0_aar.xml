@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Gradle: io.karn:notify:1.3.0@aar">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/43c64a0647ee030178f6241c3e45b9de/jetified-notify-1.3.0/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/43c64a0647ee030178f6241c3e45b9de/jetified-notify-1.3.0/res" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/43c64a0647ee030178f6241c3e45b9de/jetified-notify-1.3.0/AndroidManifest.xml" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/io.karn/notify/1.3.0/30b38cf718070e9ce7f2700b1e4fa733cd7ac26f/notify-1.3.0-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

@@ -86,7 +86,7 @@ class HomeActivity : AppCompatActivity() {
             nav_view.setCheckedItem(R.id.nav_notes)
         }
 
-        profileImage = toolbar_profile_image
+//        profileImage = toolbar_profile_image
 //        navigationImage = navigation_profile_image as CircleImageView
 
         onClickSelectedItem()
@@ -96,7 +96,7 @@ class HomeActivity : AppCompatActivity() {
         dataList = getNotesList()
 
         notesAdapter = RecyclerAdapter(this@HomeActivity, dataList)
-        recycler_view.setAdapter(notesAdapter);
+        recycler_view.adapter = notesAdapter;
 
 
         setupListOfDataIntiRecyclerView()
@@ -120,17 +120,17 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun updateUI(currentUser: FirebaseUser?) {
-        if (currentUser?.photoUrl != null) {
-            Picasso.with(this@HomeActivity).load(currentUser.photoUrl).into(profileImage)
-        }
+//        if (currentUser?.photoUrl != null) {
+//            Picasso.with(this@HomeActivity).load(currentUser.photoUrl).into(profileImage)
+//        }
     }
 
     private fun onClickSelectedItem() {
-        profileImage.setOnClickListener {
-            selectingImage()
-            Toast.makeText(this@HomeActivity, "Image Clicked", Toast.LENGTH_SHORT).show()
-        }
-
+//        profileImage.setOnClickListener {
+//            selectingImage()
+//            Toast.makeText(this@HomeActivity, "Image Clicked", Toast.LENGTH_SHORT).show()
+//        }
+//
 
 //        toolbar_searchView.setOnClickListener() {
 //            searchRecyclerView()
@@ -282,14 +282,9 @@ class HomeActivity : AppCompatActivity() {
             Toast.makeText(this, "profile Image Clicked", Toast.LENGTH_SHORT).show()
         }
 
-
-
-
         setNavigationDrawer()
         return super.onCreateOptionsMenu(menu)
     }
-
-
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (toggle.onOptionsItemSelected(item)) {
